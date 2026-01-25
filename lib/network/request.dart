@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -32,20 +31,7 @@ class Request {
     ),
   )..interceptors.add(CookieManager(_dioCookieJar));
 
-  static final Dio _mewxWenku8Dio = Dio(
-    BaseOptions(
-      headers: {HttpHeaders.userAgentHeader: "Dalvik/2.1.0 (Linux; U; Android 15; 23114RD76B Build/AQ3A.240912.001)"},
-      responseType: ResponseType.bytes, //使用bytes获取原始数据，方便解码
-    ),
-  )..interceptors.add(CookieManager(CookieJar()));
-
   static String? get _cookie => LocalStorageService.instance.getCookie();
-
-  static Map<String, String> _getMewxWenku8PostForm(String request) => {
-    "appver": "1.25-chibi-chapter-144c9c5",
-    "timetoken": DateTime.now().millisecondsSinceEpoch.toString(),
-    "request": base64.encode(utf8.encode(request)),
-  };
 
   ///获取通用数据（如其他网站的数据，即不用wenku8的cookie）
   /// - [url] 对应网站的url
@@ -144,54 +130,5 @@ class Request {
       Log.e(e.toString());
       return Error(e);
     }
-  }
-
-  /// 以post方法向mewx的中转站进行http请求
-  /// body以Content-Type: application/x-www-form-urlencoded的形式进行发送
-  /// - [request] 要请求的内容（以base64形式进行编码）
-  /// - [charsetsType] response解码的方式
-  static Future<Resource> postFormToMewxWenku8(String request, {required CharsetsType charsetsType}) async {
-    try {
-      switch (charsetsType) {
-        case CharsetsType.gbk:
-          request += "&t=0";
-          break;
-        case CharsetsType.big5Hkscs:
-          request += "&t=1";
-          break;
-      }
-
-      final response = await _mewxWenku8Dio.post(
-        "https://wenku8-relay.mewx.org",
-        data: _getMewxWenku8PostForm(request),
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType, //设置为application/x-www-form-urlencoded
-          responseType: ResponseType.plain,
-        ),
-      );
-      return Success(response.data);
-    } catch (e) {
-      Log.e(e.toString());
-      return Error(e);
-    }
-  }
-
-  static Future<Response> postFormToMewxWenku8Directly({required String request, required CharsetsType charsetsType, required CancelToken cancelToken}) {
-    switch (charsetsType) {
-      case CharsetsType.gbk:
-        request += "&t=0";
-        break;
-      case CharsetsType.big5Hkscs:
-        request += "&t=1";
-        break;
-    }
-    return _mewxWenku8Dio.post(
-      "https://wenku8-relay.mewx.org",
-      data: _getMewxWenku8PostForm(request),
-      options: Options(
-        contentType: Headers.formUrlEncodedContentType, //设置为application/x-www-form-urlencoded
-        responseType: ResponseType.plain,
-      ),
-    );
   }
 }

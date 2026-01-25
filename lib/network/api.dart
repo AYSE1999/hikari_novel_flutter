@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:dio/dio.dart';
 import 'package:enough_convert/enough_convert.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:hikari_novel_flutter/common/extension.dart';
@@ -10,7 +9,6 @@ import 'package:hikari_novel_flutter/models/common/wenku8_node.dart';
 import 'package:hikari_novel_flutter/models/resource.dart';
 import 'package:hikari_novel_flutter/network/request.dart';
 
-import '../common/log.dart';
 import '../service/local_storage_service.dart';
 
 class Api {
@@ -250,29 +248,9 @@ class Api {
   /// - [aid] 小说id
   /// - [cid] 章节id
   static Future<Resource> getNovelContent({required String aid, required String cid}) {
-    final String request = "action=book&do=text&aid=$aid&cid=$cid";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
-  }
-
-  static Future<Response> getNovelContentResponse({required String aid, required String cid, required CancelToken cancelToken}) {
-    final String request = "action=book&do=text&aid=$aid&cid=$cid";
-    return Request.postFormToMewxWenku8Directly(request: request, charsetsType: _charsetsType, cancelToken: cancelToken);
-  }
-
-  /// 登录app.wenku8
-  /// - [username] 用户名
-  /// - [password] 密码
-  static Future<Resource> loginAppWenku8({required String username, required String password}) {
-    final String request = "action=login&username=$username&password=$password";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
-  }
-
-  /// 签到
-  /// - [username] 用户名
-  /// - [password] 密码
-  static Future<Resource> sign() {
-    final String request = "action=block&do=sign";
-    return Request.postFormToMewxWenku8(request, charsetsType: _charsetsType);
+    String smallNo = aid.length < 4 ? "0" : aid.substring(0,1);
+    final String url = "${wenku8Node.node}/novel/$smallNo/$aid/$cid.htm";
+    return Request.get(url, charsetsType: _charsetsType);
   }
 
   /// 获取Github上面的最新版本
