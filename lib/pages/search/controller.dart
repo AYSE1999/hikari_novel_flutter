@@ -90,9 +90,9 @@ class SearchController extends GetxController {
     Get.closeAllSnackbars();
 
     Get.snackbar(
-      '操作过快',
+      '杂鱼点那么是准备快爬虫嘛',
       // 用短句 + 自动换行；如果未来文案变长，也会在空格/标点处自然断行
-      '请稍后再试',
+      '等5秒会自动搜索这不是Bug',
       snackPosition: SnackPosition.BOTTOM,
       snackStyle: SnackStyle.FLOATING,
 
@@ -108,7 +108,7 @@ class SearchController extends GetxController {
       // 图标从「✔」改为「×」
       icon: Icon(
         Icons.cancel_rounded,
-        color: cs.error,
+        color: cs.primary,
       ),
 
       // 让高度接近原来的 2 倍：增加上下 padding
@@ -127,7 +127,7 @@ class SearchController extends GetxController {
 
       // 文字居中（与「保存图片」一致风格）
       titleText: Text(
-        '操作过快',
+        '杂鱼点那么是准备快爬虫嘛',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: textColor,
@@ -136,7 +136,7 @@ class SearchController extends GetxController {
         ),
       ),
       messageText: Text(
-        '请稍后再试',
+        '等5秒会自动搜索这不是Bug',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: textColor,

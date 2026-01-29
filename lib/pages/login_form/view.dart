@@ -49,7 +49,7 @@ class _LoginFormPageState extends State<LoginFormPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Wenku8 Reader',
+                        'HiKari Novel',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
                       ),
