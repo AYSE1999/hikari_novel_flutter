@@ -254,7 +254,15 @@ class AppTranslations extends Translations {
       "mark_as_unread": "标为未读",
       "cloudflare_challenge_exception_tip": "当前请求已被Cloudflare的人机验证拦截，这通常是因为你的网络IP不纯净所导致的，请尝试切换其它代理节点，或者关闭代理",
       "last_read": "上次阅读",
-      "keyword": "关键词"
+      "keyword": "关键词",
+      "search": "搜索",
+      "search_mode": "搜索方式",
+      "search_by_title": "按标题名称搜索",
+      "search_by_author": "按作者名称搜索",
+      "search_history": "搜索历史",
+      "clear_all_history": "清除所有历史记录",
+      "content_of_search_is_empty": "搜索内容为空",
+      "jumped_to_other_page": "已跳转至另一页面"
     },
 
     "zh_TW": {
@@ -508,7 +516,15 @@ class AppTranslations extends Translations {
       "mark_as_unread": "標為未讀",
       "cloudflare_challenge_exception_tip": "當前請求已被Cloudflare的人機驗證攔截，這通常是因為你的網路IP不純淨所導致的，請嘗試切換其它代理節點，或者關閉代理",
       "last_read": "上次閱讀",
-      "keyword": "關鍵詞"
+      "keyword": "關鍵詞",
+      "search": "搜尋",
+      "search_mode": "搜尋方式",
+      "search_by_title": "按標題名稱搜尋",
+      "search_by_author": "按作者名稱搜尋",
+      "search_history": "搜尋歷史",
+      "clear_all_history": "清除所有歷史記錄",
+      "content_of_search_is_empty": "搜尋內容為空",
+      "jumped_to_other_page": "已跳轉至另一頁面"
     }
   };
 }

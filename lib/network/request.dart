@@ -15,6 +15,7 @@ import 'package:hikari_novel_flutter/models/resource.dart';
 import '../common/log.dart';
 import '../models/common/charsets_type.dart';
 import '../service/local_storage_service.dart';
+import 'api.dart';
 
 /// 网络请求
 class Request {
@@ -29,6 +30,7 @@ class Request {
           BaseOptions(
             headers: userAgent,
             responseType: ResponseType.bytes, //使用bytes获取原始数据，方便解码
+            followRedirects: false, //使302重定向手动处理
             validateStatus: (status) => status != null, //只要不是 null，就交给拦截器处理,
           ),
         )
@@ -79,7 +81,10 @@ class Request {
 
       final response = await dio.get(url);
 
-      final raw = response.data as Uint8List;
+      //检查是否有重定向
+      final result = await _checkRedirects(response);
+
+      final raw = result as Uint8List;
       late String decodedHtml;
       switch (charsetsType) {
         case CharsetsType.gbk:
@@ -93,6 +98,19 @@ class Request {
       Log.e(e.toString());
       return Error(e.toString());
     }
+  }
+
+  /// 检查Response包中是否要求重定向
+  /// - [response] 要检查的Response包
+  static Future<dynamic> _checkRedirects(Response response) async {
+    if (response.statusCode != null && response.statusCode! >= 300 && response.statusCode! < 400) {
+      final location = response.headers.value('location');
+      if (location != null) {
+        final redirectedResponse = await dio.get("${Api.wenku8Node.node}/$location");
+        return redirectedResponse.data;
+      }
+    }
+    return response.data;
   }
 
   /// 以post方法进行http请求
