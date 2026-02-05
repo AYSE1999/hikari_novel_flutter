@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'local_storage_service.dart';
 
+//TODO 翻译
 class TtsService extends GetxService {
   static const MethodChannel _intentChannel = MethodChannel('hikari/system_intents');
 
@@ -36,7 +37,7 @@ class TtsService extends GetxService {
   final isSessionActive = false.obs;
   final sessionTitle = ''.obs;
   final sessionProgress = 0.0.obs;
-  
+
   List<String> _chunks = const [];
   int _chunkIndex = 0;
 
@@ -47,7 +48,9 @@ class TtsService extends GetxService {
   static const List<String> _preferredLocales = <String>['zh-CN', 'zh-TW', 'zh-HK', 'en-US'];
 
   Future<void> init() async {
-    try { await _tts.awaitSpeakCompletion(true); } catch (_) {}
+    try {
+      await _tts.awaitSpeakCompletion(true);
+    } catch (_) {}
 
     _tts.setStartHandler(() {
       isPlaying.value = true;
@@ -245,7 +248,6 @@ class TtsService extends GetxService {
     await _prepareForSpeak();
   }
 
-
   Future<void> openAndroidTtsSettings() async {
     if (!Platform.isAndroid) return;
     try {
@@ -282,78 +284,77 @@ class TtsService extends GetxService {
 
   bool get isMultiTtsInstalled => engines.contains(multiTtsEnginePackage);
 
-Future<void> speak(String text) async {
-  if (!enabled.value) return;
-  await _prepareForSpeak();
-  isSessionActive.value = false;
-  _chunks = const [];
-  _chunkIndex = 0;
-  sessionProgress.value = 0.0;
-  lastSpokenText.value = text;
-  final r = await _tts.speak(text);
-  _handleSpeakResult(r);
-}
-
-Future<void> startChapter(String fullText, {String title = ''}) async {
-  if (!enabled.value) return;
-  await _prepareForSpeak();
-  final cleaned = fullText.replaceAll(RegExp(r'\s+'), ' ').trim();
-  if (cleaned.isEmpty) return;
-
-  sessionTitle.value = title;
-  isSessionActive.value = true;
-  isPaused.value = false;
-
-  _chunks = _splitToChunks(cleaned);
-  _chunkIndex = 0;
-  sessionProgress.value = 0.0;
-
-  lastSpokenText.value = cleaned;
-  await _speakCurrentChunk();
-}
-
-Future<void> resumeSession() async {
-  if (!enabled.value) return;
-  await _prepareForSpeak();
-  if (!isSessionActive.value) {
-    if (lastSpokenText.value.trim().isNotEmpty) {
-      await speak(lastSpokenText.value);
-    }
-    return;
+  Future<void> speak(String text) async {
+    if (!enabled.value) return;
+    await _prepareForSpeak();
+    isSessionActive.value = false;
+    _chunks = const [];
+    _chunkIndex = 0;
+    sessionProgress.value = 0.0;
+    lastSpokenText.value = text;
+    final r = await _tts.speak(text);
+    _handleSpeakResult(r);
   }
-  if (isPaused.value) {
-    final dynamic ttsDyn = _tts;
-    try {
-      isPaused.value = false;
-      await ttsDyn.continueSpeaking();
+
+  Future<void> startChapter(String fullText, {String title = ''}) async {
+    if (!enabled.value) return;
+    await _prepareForSpeak();
+    final cleaned = fullText.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (cleaned.isEmpty) return;
+
+    sessionTitle.value = title;
+    isSessionActive.value = true;
+    isPaused.value = false;
+
+    _chunks = _splitToChunks(cleaned);
+    _chunkIndex = 0;
+    sessionProgress.value = 0.0;
+
+    lastSpokenText.value = cleaned;
+    await _speakCurrentChunk();
+  }
+
+  Future<void> resumeSession() async {
+    if (!enabled.value) return;
+    await _prepareForSpeak();
+    if (!isSessionActive.value) {
+      if (lastSpokenText.value.trim().isNotEmpty) {
+        await speak(lastSpokenText.value);
+      }
       return;
-    } catch (_) {
+    }
+    if (isPaused.value) {
+      final dynamic ttsDyn = _tts;
       try {
         isPaused.value = false;
-        await ttsDyn.resume();
+        await ttsDyn.continueSpeaking();
         return;
       } catch (_) {
+        try {
+          isPaused.value = false;
+          await ttsDyn.resume();
+          return;
+        } catch (_) {}
       }
     }
+    isPaused.value = false;
+    await _speakCurrentChunk();
   }
-  isPaused.value = false;
-  await _speakCurrentChunk();
-}
 
-Future<void> pauseSession() async {
-  if (!enabled.value) return;
-  _pauseRequested = true;
-  _stopRequested = false;
-  try {
-    await _tts.pause();
-  } catch (_) {
+  Future<void> pauseSession() async {
+    if (!enabled.value) return;
+    _pauseRequested = true;
+    _stopRequested = false;
     try {
-      await _tts.stop();
-    } catch (_) {}
+      await _tts.pause();
+    } catch (_) {
+      try {
+        await _tts.stop();
+      } catch (_) {}
+    }
+    isPlaying.value = false;
+    isPaused.value = true;
   }
-  isPlaying.value = false;
-  isPaused.value = true;
-}
 
   Future<void> pause() async {
     if (isSessionActive.value) {
@@ -390,9 +391,7 @@ Future<void> pauseSession() async {
       _endSession();
       return;
     }
-    sessionProgress.value = _chunks.isEmpty
-        ? 0.0
-        : (_chunkIndex / _chunks.length).clamp(0.0, 1.0);
+    sessionProgress.value = _chunks.isEmpty ? 0.0 : (_chunkIndex / _chunks.length).clamp(0.0, 1.0);
   }
 
   Future<void> _prepareForSpeak() async {
@@ -408,11 +407,7 @@ Future<void> pauseSession() async {
     final fromVoice = voice.value?['locale'];
     final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale.toLanguageTag();
 
-    final candidates = <String>{
-      if (fromVoice != null && fromVoice.trim().isNotEmpty) fromVoice,
-      deviceLocale,
-      ..._preferredLocales,
-    }.toList();
+    final candidates = <String>{if (fromVoice != null && fromVoice.trim().isNotEmpty) fromVoice, deviceLocale, ..._preferredLocales}.toList();
 
     for (final loc in candidates) {
       if (await _trySetLanguage(loc)) {
@@ -481,11 +476,7 @@ Future<void> pauseSession() async {
   }
 
   List<String> _splitToChunks(String text) {
-    final parts = text
-        .split(RegExp(r'(?<=[。！？!?；;])'))
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+    final parts = text.split(RegExp(r'(?<=[。！？!?；;])')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
 
     final chunks = <String>[];
     final buf = StringBuffer();

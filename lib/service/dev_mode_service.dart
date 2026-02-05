@@ -6,27 +6,24 @@ class DevModeService extends GetxService {
 
   final RxBool enabled = false.obs;
 
-  Future<DevModeService> init() async {
-    enabled.value = LocalStorageService.instance.getDevModeEnabled();
-    return this;
-  }
+  void init() => enabled.value = LocalStorageService.instance.getDevModeEnabled();
 
-  Future<void> enable() async {
+  void enable() {
     enabled.value = true;
-    await LocalStorageService.instance.setDevModeEnabled(true);
+    LocalStorageService.instance.setDevModeEnabled(true);
   }
 
-  Future<void> disable() async {
+  void disable()  {
     enabled.value = false;
-    await LocalStorageService.instance.setDevModeEnabled(false);
+    LocalStorageService.instance.setDevModeEnabled(false);
   }
 
-  Future<bool> toggle() async {
+  bool toggle() {
     if (enabled.value) {
-      await disable();
+      disable();
       return false;
     } else {
-      await enable();
+      enable();
       return true;
     }
   }

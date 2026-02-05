@@ -231,8 +231,7 @@ class LocalStorageService extends GetxService {
 
   void setReaderTtsVolume(double value) => _reader.put(kReaderTtsVolume, value);
 
-bool getDevModeEnabled() => _setting.get(kDevModeEnabled, defaultValue: false);
+  bool getDevModeEnabled() => _setting.get(kDevModeEnabled, defaultValue: false);
 
-Future<void> setDevModeEnabled(bool value) async => _setting.put(kDevModeEnabled, value);
-
+  void setDevModeEnabled(bool value) => _setting.put(kDevModeEnabled, value);
 }

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../service/dev_mode_service.dart';
-
+//TODO 翻译
 class DevToolsPage extends StatelessWidget {
   const DevToolsPage({super.key});
 
@@ -31,22 +31,18 @@ class DevToolsPage extends StatelessWidget {
     return d;
   }
 
-  Future<void> _showTextFile(BuildContext context, String title, File file) async {
+  Future<void> _showTextFile(String title, File file) async {
     final exists = await file.exists();
     final content = exists ? await file.readAsString() : '';
     await showDialog(
-      context: context,
+      context: Get.context!,
       builder: (_) => AlertDialog(
         title: Text(title),
         content: SizedBox(
           width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: SelectableText(exists ? content : '暂无内容'),
-          ),
+          child: SingleChildScrollView(child: SelectableText(exists ? content : '暂无内容')),
         ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('关闭')),
-        ],
+        actions: [TextButton(onPressed: () => Get.back(), child: const Text('关闭'))],
       ),
     );
   }
@@ -79,10 +75,10 @@ class DevToolsPage extends StatelessWidget {
     Get.snackbar('开发者工具', 'HTML dumps 已清空');
   }
 
-  Future<void> _showDumps(BuildContext context) async {
+  Future<void> _showDumps() async {
     final items = await _listDumps();
     await showDialog(
-      context: context,
+      context: Get.context!,
       builder: (_) => AlertDialog(
         title: Text('HTML dumps (${items.length})'),
         content: SizedBox(
@@ -101,15 +97,13 @@ class DevToolsPage extends StatelessWidget {
                       title: Text(name, maxLines: 1, overflow: TextOverflow.ellipsis),
                       onTap: () async {
                         Get.back();
-                        await _showTextFile(context, name, f);
+                        await _showTextFile(name, f);
                       },
                     );
                   },
                 ),
         ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('关闭')),
-        ],
+        actions: [TextButton(onPressed: () => Get.back(), child: const Text('关闭'))],
       ),
     );
   }
@@ -117,7 +111,7 @@ class DevToolsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('开发者工具')),
+      appBar: AppBar(title: const Text('开发者工具'), titleSpacing: 0),
       body: ListView(
         children: [
           Obx(
@@ -134,23 +128,13 @@ class DevToolsPage extends StatelessWidget {
             subtitle: const Text('摘要日志：title + HTML 前 500 字'),
             onTap: () async {
               final file = await _logFile();
-              await _showTextFile(context, 'html_debug.txt', file);
+              await _showTextFile('html_debug.txt', file);
             },
           ),
-          ListTile(
-            title: const Text('清空 html_debug.txt'),
-            onTap: _clearLog,
-          ),
+          ListTile(title: const Text('清空 html_debug.txt'), onTap: _clearLog),
           const Divider(height: 1),
-          ListTile(
-            title: const Text('查看 HTML dumps'),
-            subtitle: const Text('完整 HTML（用于 MT 直接分析）'),
-            onTap: () => _showDumps(context),
-          ),
-          ListTile(
-            title: const Text('清空 HTML dumps'),
-            onTap: _clearDumps,
-          ),
+          ListTile(title: const Text('查看 HTML dumps'), subtitle: const Text('完整 HTML（用于 MT 直接分析）'), onTap: () => _showDumps()),
+          ListTile(title: const Text('清空 HTML dumps'), onTap: _clearDumps),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -158,9 +142,7 @@ class DevToolsPage extends StatelessWidget {
               future: _appDir(),
               builder: (_, snap) {
                 final path = snap.data?.path ?? '';
-                final s = path.isEmpty
-                    ? '路径加载中…'
-                    : '本地目录:\n$path\n\nMT 查看：Android/data/<package>/files/\n- html_debug.txt\n- html_dumps/';
+                final s = path.isEmpty ? '路径加载中…' : '本地目录:\n$path\n\nMT 查看：Android/data/<package>/files/\n- html_debug.txt\n- html_dumps/';
                 return Text(s, style: const TextStyle(fontSize: 12));
               },
             ),

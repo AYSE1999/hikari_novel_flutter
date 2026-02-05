@@ -28,7 +28,7 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Get.put(LocalStorageService()).init();
-  await Get.put(DevModeService()).init();
+  Get.put(DevModeService()).init();
   Get.put(DBService()).init();
   await Get.put(TtsService()).init();
 
