@@ -38,7 +38,11 @@ class MainActivity : FlutterActivity() {
                             if (launched) {
                                 result.success(true)
                             } else {
-                                result.error("INTENT_FAILED", lastErr?.message ?: "no activity found", null)
+                                result.error(
+                                    "INTENT_FAILED",
+                                    lastErr?.message ?: "no activity found",
+                                    null
+                                )
                             }
                         } catch (e: Exception) {
                             result.error("INTENT_FAILED", e.message, null)

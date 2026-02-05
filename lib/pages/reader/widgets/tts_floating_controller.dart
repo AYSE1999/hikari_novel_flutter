@@ -27,10 +27,7 @@ class _TtsFloatingControllerState extends State<TtsFloatingController> {
       final size = MediaQuery.of(context).size;
       final safeTop = MediaQuery.of(context).padding.top + 8;
       final safeBottom = MediaQuery.of(context).padding.bottom + 8;
-      final clamped = Offset(
-        offset.dx.clamp(8, size.width - 8 - 240),
-        offset.dy.clamp(safeTop, size.height - safeBottom - 56),
-      );
+      final clamped = Offset(offset.dx.clamp(8, size.width - 8 - 240), offset.dy.clamp(safeTop, size.height - safeBottom - 56));
       offset = clamped;
 
       return Positioned(
@@ -83,25 +80,20 @@ class _TtsFloatingControllerState extends State<TtsFloatingController> {
               iconSize: 22,
               onPressed: () async {
                 if (tts.isPlaying.value) {
-  await tts.pauseSession();
-} else if (tts.isPaused.value && tts.isSessionActive.value) {
-  await tts.resumeSession();
-} else {
-  final text = reader.text.value;
-  final cleaned = text.replaceAll(RegExp(r'\s+'), ' ').trim();
-  if (cleaned.isNotEmpty) {
-    await tts.startChapter(cleaned);
-  }
-}
+                  await tts.pauseSession();
+                } else if (tts.isPaused.value && tts.isSessionActive.value) {
+                  await tts.resumeSession();
+                } else {
+                  final text = reader.text.value;
+                  final cleaned = text.replaceAll(RegExp(r'\s+'), ' ').trim();
+                  if (cleaned.isNotEmpty) {
+                    await tts.startChapter(cleaned);
+                  }
+                }
               },
               icon: Icon(tts.isPlaying.value ? Icons.pause_circle_filled : Icons.play_circle_filled),
             ),
-            IconButton(
-              tooltip: '停止',
-              iconSize: 22,
-              onPressed: () => tts.stop(),
-              icon: const Icon(Icons.stop_circle),
-            ),
+            IconButton(tooltip: '停止', iconSize: 22, onPressed: () => tts.stop(), icon: const Icon(Icons.stop_circle)),
             IconButton(
               tooltip: '退出',
               iconSize: 22,

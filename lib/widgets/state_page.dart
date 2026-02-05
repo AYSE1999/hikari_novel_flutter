@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:wx_divider/wx_divider.dart';
 
 class ErrorMessage extends StatelessWidget {
-  // Keep `onRetry` for backward compatibility with existing call sites.
-  // The UI intentionally does NOT render a retry button.
-  const ErrorMessage({super.key, required this.msg, this.onRetry});
+  const ErrorMessage({super.key, required this.msg, required this.action, this.buttonText = "retry", this.iconData = Icons.refresh});
 
   final String msg;
-  final VoidCallback? onRetry;
+  final Function()? action;
+  final String buttonText;
+  final IconData iconData;
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +21,10 @@ class ErrorMessage extends StatelessWidget {
         children: [
           Text(
             "error".tr,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: _buildErrorInfo(),
-          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child: _buildErrorInfo()),
+          action == null ? Container() : FilledButton.icon(onPressed: action, icon: Icon(iconData), label: Text(buttonText.tr)),
         ],
       ),
     );
@@ -37,15 +32,7 @@ class ErrorMessage extends StatelessWidget {
 
   Widget _buildErrorInfo() {
     if (msg.contains("Cloudflare Challenge Detected")) {
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            Text("cloudflare_challenge_exception_tip".tr),
-            const SizedBox(width: 50, child: Divider()),
-            Text(msg),
-          ],
-        ),
-      );
+      return _getCommonErrorInfoView(msg);
     } else {
       return SingleChildScrollView(child: Text(msg));
     }
@@ -69,13 +56,7 @@ class LogoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image.asset(
-        "assets/images/logo_transparent.png",
-        width: 150,
-        height: 150,
-      ),
-    );
+    return Center(child: Image.asset("assets/images/logo_transparent.png", width: 150, height: 150));
   }
 }
 
@@ -90,10 +71,7 @@ class PleaseSelectPage extends StatelessWidget {
         children: [
           const Icon(Symbols.web_traffic, size: 48),
           const SizedBox(height: 16),
-          Text(
-            "please_select_type".tr,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
+          Text("please_select_type".tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -113,39 +91,32 @@ class EmptyPage extends StatelessWidget {
         children: [
           const Icon(Icons.inbox, size: 48),
           const SizedBox(height: 16),
-          Text(
-            "empty_content".tr,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          if (onRefresh != null)
-            TextButton.icon(
-              onPressed: onRefresh,
-              icon: const Icon(Icons.refresh),
-              label: Text("refresh".tr),
-            ),
+          Text("empty_content".tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          onRefresh != null ? TextButton.icon(onPressed: onRefresh, icon: Icon(Icons.refresh), label: Text("refresh".tr)) : const SizedBox(),
         ],
       ),
     );
   }
 }
 
+Widget _getCommonErrorInfoView(String msg) => SingleChildScrollView(
+  child: Column(
+    children: [
+      Text("cloudflare_challenge_exception_tip".tr),
+      const WxDivider(pattern: WxDivider.dashed, child: Text("Raw Message")),
+      const SizedBox(height: 6),
+      Text(msg),
+    ],
+  ),
+);
+
 Future showErrorDialog(String msg, List<Widget> actions) {
   late Widget content;
   if (msg.contains("Cloudflare Challenge Detected")) {
-    content = SingleChildScrollView(
-      child: Column(
-        children: [
-          Text("cloudflare_challenge_exception_tip".tr),
-          const SizedBox(width: 50, child: Divider()),
-          Text(msg),
-        ],
-      ),
-    );
+    content = _getCommonErrorInfoView(msg);
   } else {
     content = SingleChildScrollView(child: Text(msg));
   }
 
-  return Get.dialog(
-    AlertDialog(title: Text("error".tr), content: content, actions: actions),
-  );
+  return Get.dialog(AlertDialog(title: Text("error".tr), content: content, actions: actions));
 }

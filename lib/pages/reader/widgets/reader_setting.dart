@@ -347,15 +347,15 @@ class ReaderSettingPage extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: Text('打开系统 TTS 设置', style: kSettingTitleTextStyle),
+          title: Text('打开系统TTS设置', style: kSettingTitleTextStyle),
           trailing: const Icon(Icons.open_in_new),
           onTap: () => tts.openAndroidTtsSettings(),
         ),
         Obx(
           () => ListTile(
-            title: Text('TTS 引擎', style: kSettingTitleTextStyle),
+            title: Text('TTS引擎', style: kSettingTitleTextStyle),
             subtitle: Text(
-              tts.engine.value == null ? (Platform.isAndroid ? '自动(系统默认)' : 'iOS 不支持切换引擎') : tts.displayEngineName(tts.engine.value!),
+              tts.engine.value == null ? (Platform.isAndroid ? '自动(系统默认)' : '当前系统不支持切换引擎') : tts.displayEngineName(tts.engine.value!),
               style: kSettingSubtitleTextStyle,
             ),
             enabled: tts.enabled.value && Platform.isAndroid,

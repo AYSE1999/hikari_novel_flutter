@@ -11,7 +11,7 @@ class AboutController extends GetxController {
     if (_versionTapCount >= 5) {
       _versionTapCount = 0;
       final enabled = await DevModeService.instance.toggle();
-      // Use GetX built-in snackbar to avoid extra toast implementation.
+      //TODO 1）风格不统一，应去除；2）翻译
       Get.snackbar(
         '开发者模式',
         enabled ? '您已打开开发者模式。' : '您已关闭开发者模式。',

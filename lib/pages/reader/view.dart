@@ -95,7 +95,7 @@ class ReaderPage extends StatelessWidget {
           Obx(
             () => Offstage(
               offstage: controller.pageState.value != PageState.error,
-              child: ErrorMessage(msg: controller.errorMsg, onRetry: controller.getContent),
+              child: ErrorMessage(msg: controller.errorMsg, action: controller.getContent),
             ),
           ),
           _buildBottomStatusBar(context),
